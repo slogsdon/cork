@@ -4,8 +4,12 @@ F# port of [Elixir's Plug library](https://github.com/elixir-lang/plug)
 
 ## Projects
 
-- [Spile](src/Spile) - Core library
-- [Spile.AspNetCore](src/Spile.AspNetCore) - Entry for using Spile in an ASP.NET Core project with included ASP.NET middleware and helpers to aid in project development
+- [Spile](src/Spile)
+  - Core library
+  - Targets `netstandard1.6` to match F# (as of 15 Feb 2018)
+- [Spile.AspNetCore](src/Spile.AspNetCore)
+  - Entry for using Spile in an ASP.NET Core project with included ASP.NET middleware and helpers to aid in project development
+  - Targets `netstandard2.0` to match Microsoft.AspNetCore (as of 15 Feb 2018)
 
 ## Examples
 
