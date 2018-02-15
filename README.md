@@ -17,7 +17,6 @@ F# port of [Elixir's Plug library](https://github.com/elixir-lang/plug)
 
 ## TODO
 
-- Use Paket
 - Convert Makefile to FAKE script
 - Expand ASP.NET middleware to use more than HttpContext API
   - Create Connection helpers

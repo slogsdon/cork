@@ -17,4 +17,6 @@
     <ProjectReference Include="..\..\src\Spile.AspNetCore\Spile.AspNetCore.fsproj" />
   </ItemGroup>
 
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+
 </Project>
