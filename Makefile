@@ -53,7 +53,3 @@ restore:
 ## Run package tests
 tests:
 	@dotnet test $(TEST_OPTIONS) $(TEST_PROJECT)
-
-## Run package tests in watch mode
-watch-tests:
-	@cd $(TEST_PROJECT) && dotnet watch test $(TEST_OPTIONS)
