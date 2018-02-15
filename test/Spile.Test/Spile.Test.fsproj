@@ -14,10 +14,6 @@
     <ProjectReference Include="..\..\src\Spile\Spile.fsproj" Version="*" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="*" />
-    <PackageReference Include="MSTest.TestAdapter" Version="*" />
-    <PackageReference Include="MSTest.TestFramework" Version="*" />
-  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 
 </Project>

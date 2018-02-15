@@ -1,0 +1,11 @@
+source https://nuget.org/api/v2
+storage: none
+
+nuget FSharp.Core
+
+# Spile.AspNetCore
+nuget Microsoft.AspNetCore.Http.Abstractions
+
+nuget Microsoft.NET.Test.Sdk
+nuget MSTest.TestAdapter
+nuget MSTest.TestFramework
