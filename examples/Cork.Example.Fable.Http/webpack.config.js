@@ -12,9 +12,9 @@ const babelOptions = {
 }
 
 module.exports = {
-    entry: resolve('./Spile.Fable.Http.Test.fsproj'),
+    entry: resolve('./Cork.Example.Fable.Http.fsproj'),
     output: {
-        filename: 'tests.bundle.js',
+        filename: 'bundle.js',
         path: resolve('./bin'),
     },
     target: "node",

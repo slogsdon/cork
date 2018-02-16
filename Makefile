@@ -1,5 +1,5 @@
 # Project configuration
-PROJECT_NAME = Spile
+PROJECT_NAME = Cork
 TEST_PROJECT = test/$(PROJECT_NAME).Test/
 TEST_OPTIONS = --no-restore --no-build
 
@@ -42,8 +42,8 @@ all: clean restore build tests
 ## Build package
 build:
 	@dotnet build --no-restore --verbosity=minimal
-	@cd test/Spile.Fable.Http.Test && dotnet fable webpack --port free
-	@cd examples/Spile.Example.Fable.Http && dotnet fable webpack --port free
+	@cd test/Cork.Fable.Http.Test && dotnet fable webpack --port free
+	@cd examples/Cork.Example.Fable.Http && dotnet fable webpack --port free
 
 ## Clean build artifacts
 clean:
@@ -56,12 +56,12 @@ restore:
 	@yarn install
 
 run-aspnetcore:
-	@dotnet run $(TEST_OPTIONS) --project examples/Spile.Example.AspNetCore/Spile.Example.AspNetCore.fsproj
+	@dotnet run $(TEST_OPTIONS) --project examples/Cork.Example.AspNetCore/Cork.Example.AspNetCore.fsproj
 
 run-fable-http:
-	@node examples/Spile.Example.Fable.Http/bin/bundle.js
+	@node examples/Cork.Example.Fable.Http/bin/bundle.js
 
 ## Run package tests
 tests:
 	@dotnet test $(TEST_OPTIONS) $(TEST_PROJECT)
-	@cd test/Spile.Fable.Http.Test && yarn run mocha bin
+	@cd test/Cork.Fable.Http.Test && yarn run mocha bin

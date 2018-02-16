@@ -1,9 +1,9 @@
 [<AutoOpen>]
-module Spile.Fable.Http.Library
+module Cork.Fable.Http.Library
 
 open Fable.Import.Node.Http
-open Spile
-open Spile.Connection
+open Cork
+open Cork.Connection
 
 [<AutoOpen>]
 module Middleware =
@@ -11,10 +11,10 @@ module Middleware =
   /// objects in the `Connection.Private` property.
   ///
   /// Warning: If using this to access the raw objects, changes
-  /// may be overwritten once a Spile callstack is invoked.
+  /// may be overwritten once a Cork callstack is invoked.
   let connectionPrivateKey key = String.concat "" ["node_http"; key]
 
-  /// Converts an Node.js HTTP context to a Spile client connection record.
+  /// Converts an Node.js HTTP context to a Cork client connection record.
   let connectionOfHttpContext (req: IncomingMessage, res: ServerResponse): Connection =
     { defaultConnection with
         Private =
@@ -23,7 +23,7 @@ module Middleware =
             connectionPrivateKey "response", res :> obj
           ] }
 
-  /// Converts a Spile result to its corresponding Node.js HTTP context.
+  /// Converts a Cork result to its corresponding Node.js HTTP context.
   ///
   /// If an error occurred as a result of a thrown exception, the
   /// the exception is rethrown to allow Node.js to handle.
@@ -47,11 +47,11 @@ module Middleware =
 
       error.Connection |> getRequest, error.Connection |> getResponse
 
-  let useSpile (spiles: (ISpile * Options) list) =
+  let useCork (corks: (ICork * Options) list) =
     fun (req: IncomingMessage) (res: ServerResponse) ->
       (req, res)
       |> connectionOfHttpContext
-      |> run spiles
+      |> run corks
       |> httpContextOfResult
       |> ignore
 

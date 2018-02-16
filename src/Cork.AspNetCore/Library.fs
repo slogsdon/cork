@@ -1,8 +1,8 @@
-namespace Spile.AspNetCore
+namespace Cork.AspNetCore
 
 open Microsoft.AspNetCore.Http
-open Spile
-open Spile.Connection
+open Cork
+open Cork.Connection
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Builder
 
@@ -12,15 +12,15 @@ module Middleware =
   /// `Connection.Private` property.
   ///
   /// Warning: If using this to access the raw `HttpContext" object,
-  /// changes may be overwritten once a Spile callstack is invoked.
+  /// changes may be overwritten once a Cork callstack is invoked.
   let connectionPrivateKey = "aspnetcore_httpcontext"
 
-  /// Converts an ASP.NET HTTP context to a Spile client connection record.
+  /// Converts an ASP.NET HTTP context to a Cork client connection record.
   let connectionOfHttpContext (context: HttpContext): Connection =
     { defaultConnection with
         Private = dict [connectionPrivateKey, context :> obj] }
 
-  /// Converts a Spile result to its corresponding ASP.NET HTTP context.
+  /// Converts a Cork result to its corresponding ASP.NET HTTP context.
   ///
   /// If an error occurred as a result of a thrown exception, the
   /// the exception is rethrown to allow ASP.NET to handle.
@@ -38,29 +38,29 @@ module Middleware =
 
       error.Connection |> getContext
 
-/// ASP.NET middleware for Spile. Allows a Spile stack to be used in conjuction with
+/// ASP.NET middleware for Cork. Allows a Cork stack to be used in conjuction with
 /// a project's existing ASP.NET middleware or replace it fully.
-type SpileMiddleware (next: RequestDelegate, spiles: (ISpile * Options) list) =
+type CorkMiddleware (next: RequestDelegate, corks: (ICork * Options) list) =
   let next = next
-  let spiles = spiles
+  let corks = corks
 
-  /// Converts a Spile call stack to an invokable `Task` for the
+  /// Converts a Cork call stack to an invokable `Task` for the
   /// ASP.NET middleware stack.
   member __.Invoke(context: HttpContext): Task =
     context
     |> connectionOfHttpContext
-    |> run spiles
+    |> run corks
     |> httpContextOfResult
     |> next.Invoke
 
-type SpileResponse () =
+type CorkResponse () =
   static member Finalize = RequestDelegate(fun (context: HttpContext) ->
      context.Response.WriteAsync(""))
 
 [<AutoOpen>]
-module SpileMiddlewareExtensions =
+module CorkMiddlewareExtensions =
   type IApplicationBuilder with
-    member this.UseSpile (spiles: (ISpile * Options) list) =
-      this.UseMiddleware<SpileMiddleware>(spiles)
+    member this.UseCork (corks: (ICork * Options) list) =
+      this.UseMiddleware<CorkMiddleware>(corks)
 
 

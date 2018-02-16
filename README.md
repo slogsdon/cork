@@ -1,35 +1,35 @@
-# Spile
+# Cork
 
 F# port of [Elixir's Plug library](https://github.com/elixir-lang/plug)
 
 ## Projects
 
-- [Spile](src/Spile)
+- [Cork](src/Cork)
   - Core library
   - Targets `netstandard1.6` to match F# (as of 15 Feb 2018)
-- [Spile.AspNetCore](src/Spile.AspNetCore)
-  - Library for using Spile in an ASP.NET Core project with included ASP.NET middleware and helpers to aid in project development
+- [Cork.AspNetCore](src/Cork.AspNetCore)
+  - Library for using Cork in an ASP.NET Core project with included ASP.NET middleware and helpers to aid in project development
   - Targets `netstandard2.0` to match Microsoft.AspNetCore (as of 15 Feb 2018)
-- [Spile.Fable.Http](src/Spile.Fable.Http)
-  - Library for using Spile in a Node.js project which uses the built-in HTTP server with included helpers to aid in project development
+- [Cork.Fable.Http](src/Cork.Fable.Http)
+  - Library for using Cork in a Node.js project which uses the built-in HTTP server with included helpers to aid in project development
   - Targets `netstandard2.0` to match Fable.Import.Node (as of 16 Feb 2018)
 
 ## Installation
 
-Add a Spile package to your project via `dotnet add package`, `paket add`, etc. For example:
+Add a Cork package to your project via `dotnet add package`, `paket add`, etc. For example:
 
 ```
-dotnet add package Spile
+dotnet add package Cork
 ```
 
 ## Getting Started
 
 ```fsharp
-open Spile
+open Cork
 
 // new class type extending abstract
-type MySpile () =
-  inherit AbstractSpile()
+type MyCork () =
+  inherit AbstractCork()
 
   override __.Call _options conn =
     Ok { conn with
@@ -38,28 +38,28 @@ type MySpile () =
        }
 
 // new object expression implementing interface
-let TestSpile () =
-  { new ISpile with
+let TestCork () =
+  { new ICork with
       member __.Init options = options
       member __.Call _ conn = Ok conn }
 
-let spiles = [
-  MySpile() :> ISpile, defaultSpileOptions
-  TestSpile(), defaultSpileOptions
+let corks = [
+  MyCork() :> ICork, defaultCorkOptions
+  TestCork(), defaultCorkOptions
 ]
 
 // this should be updated with real connection information
 let conn = Connection.defaultConnection
 
-conn |> run spiles
+conn |> run corks
 ```
 
 ## Examples
 
 For a full end-to-end demonstration, look at one of the below example projects:
 
-- [Spile.Example.AspNetCore](examples/Spile.Example.AspNetCore) - Minimal ASP.NET Core project using Spile, created with `dotnet new web -lang f#` and modified to use Spile.AspNetCore.
-- [Spile.Example.Fable.Http](examples/Spile.Example.Fable.Http) - Minimal Node.js project using Spile, created with `dotnet new fable-library -lang f#` and modified to use Spile.Fable.Http.
+- [Cork.Example.AspNetCore](examples/Cork.Example.AspNetCore) - Minimal ASP.NET Core project using Cork, created with `dotnet new web -lang f#` and modified to use Cork.AspNetCore.
+- [Cork.Example.Fable.Http](examples/Cork.Example.Fable.Http) - Minimal Node.js project using Cork, created with `dotnet new fable-library -lang f#` and modified to use Cork.Fable.Http.
 
 ## TODO
 
@@ -75,10 +75,10 @@ For a full end-to-end demonstration, look at one of the below example projects:
 - Investigate if a computation expression would be beneficial to offer. Potentially:
 
   ```fsharp
-  let spiles =
-    spile_builder {
-      spile SpileName, options
-      spile AnotherSpile
+  let corks =
+    cork_builder {
+      cork CorkName, options
+      cork AnotherCork
     }
   ```
 

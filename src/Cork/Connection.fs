@@ -1,4 +1,4 @@
-module Spile.Connection
+module Cork.Connection
 
 open System
 open System.Collections.Generic
@@ -37,7 +37,7 @@ type Connection =
     PathParams: Params<string>
     /// Server listening port
     Port: int
-    /// Dictionary for use by Spile / framework developers
+    /// Dictionary for use by Cork / framework developers
     Private: Params<obj>
     /// Request query string parsed from the raw string
     QueryParams: Fetchable<Params<obj>>
