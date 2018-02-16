@@ -44,8 +44,8 @@ let TestCork () =
       member __.Call _ conn = Ok conn }
 
 let corks = [
-  MyCork() :> ICork, defaultCorkOptions
-  TestCork(), defaultCorkOptions
+  cork MyCork defaultCorkOptions
+  cork TestCork defaultCorkOptions
 ]
 
 // this should be updated with real connection information
