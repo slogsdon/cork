@@ -25,7 +25,7 @@ type Startup() =
       app.UseDeveloperExceptionPage() |> ignore
 
     let spiles = [
-      MySpile() :> ISpile, defaultSpileOptions
+      spile MySpile defaultSpileOptions
     ]
 
     app.UseSpile(spiles) |> ignore

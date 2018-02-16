@@ -27,9 +27,9 @@ type TestClass () =
   member __.TestMethodPassing () =
     let conn = defaultConnection
 
-    let spiles : (ISpile * Options) list = [
-      OkSpile() :> ISpile, defaultSpileOptions
-      TestSpile(), defaultSpileOptions
+    let spiles = [
+      spile OkSpile defaultSpileOptions
+      spile TestSpile defaultSpileOptions
     ]
 
     conn

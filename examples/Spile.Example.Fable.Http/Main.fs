@@ -22,9 +22,9 @@ type FinalizeSpile () =
     response.``end``()
     Ok conn
 
-let spiles: (ISpile * Options) list = [
-  MySpile() :> ISpile, defaultSpileOptions
-  FinalizeSpile() :> ISpile, defaultSpileOptions
+let spiles = [
+  spile MySpile defaultSpileOptions
+  spile FinalizeSpile defaultSpileOptions
 ]
 
 let http: Http.IExports = importAll "http"

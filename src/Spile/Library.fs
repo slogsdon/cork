@@ -21,6 +21,11 @@ type ISpile =
 
 [<AutoOpen>]
 module Library =
+  /// Helper for building Spile lists, handling the cast to ISpile for
+  /// compatible sub-types.
+  let spile (spileType: unit -> 'T when 'T :> ISpile) (opts: Options) =
+    spileType() :> ISpile, opts
+
   /// A set of empty Spile options.
   let defaultSpileOptions: Options = dict []
   /// A basic init function for Spiles to use in their implementations.
