@@ -47,7 +47,7 @@ build:
 
 ## Clean build artifacts
 clean:
-	@rm -rf **/*/bin **/*/obj
+	@rm -rf src/*/bin src/*/obj test/*/bin test/*/obj examples/*/bin examples/*/obj
 
 ## Restore package dependencies
 restore:
