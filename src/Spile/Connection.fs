@@ -22,27 +22,38 @@ type Headers = (string * string) list
 /// The request and response of a client connection
 type Connection =
   {
+    /// Dictionary for use by application developers
     Assigns: Params<obj>
     BeforeSend: (Connection -> Connection) list
     BodyParams: Fetchable<Params<obj>>
     Cookies: Fetchable<Params<string>>
+    /// Server listening host
     Host: string
+    /// Request HTTP method
     Method: string
     Params: Fetchable<Params<obj>>
+    /// Request path split by path separators
     PathInfo: string list
     PathParams: Params<string>
+    /// Server listening port
     Port: int
+    /// Dictionary for use by Spile / framework developers
     Private: Params<obj>
+    /// Request query string parsed from the raw string
     QueryParams: Fetchable<Params<obj>>
+    /// Raw request query string
     QueryString: string
     Peer: string * int
+    /// Address for the connected client
     RemoteIP: string
     RequestCookies: Fetchable<Params<string>>
     RequestHeaders: Headers
+    /// Raw request path
     RequestPath: string
     ResponseBody: string
     ResponseCookies: Fetchable<Params<string>>
     ResponseHeaders: Headers
+    /// Request scheme
     Scheme: string
     /// State of the connection
     State: ConnectionState
@@ -73,7 +84,6 @@ let defaultConnection =
     ResponseCookies = Unfetched
     ResponseHeaders = []
     Scheme = ""
-    /// State of the connection
     State = Unset
     Status = 0
   }
