@@ -1,7 +1,7 @@
-module Spile.Fable.Http.Test.LibraryTests
+module Cork.Fable.Http.Test.LibraryTests
 
 open Fable.Core
-// open Spile.Fable.Http
+// open Cork.Fable.Http
 open Fable.Core.Testing
 
 [<Global>]

@@ -1,3 +1,3 @@
-module Spile.Test.Program
+module Cork.Test.Program
 
 let [<EntryPoint>] main _ = 0

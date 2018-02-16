@@ -1,4 +1,4 @@
-namespace Spile.Example.AspNetCore
+namespace Cork.Example.AspNetCore
 
 open Microsoft.AspNetCore
 open Microsoft.AspNetCore.Hosting

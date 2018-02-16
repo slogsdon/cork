@@ -1,9 +1,9 @@
-module Spile.Test.LibraryTests
+module Cork.Test.LibraryTests
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 
-open Spile
-open Spile.Connection
+open Cork
+open Cork.Connection
 
 let assertOkResult result =
   match result with
@@ -11,12 +11,12 @@ let assertOkResult result =
   | Error _ -> Assert.Fail()
 
 // new class type extending abstract
-type OkSpile () =
-  inherit AbstractSpile()
+type OkCork () =
+  inherit AbstractCork()
 
 // new object expression implementing interface
-let TestSpile () =
-  { new ISpile with
+let TestCork () =
+  { new ICork with
       member __.Init options = options
       member __.Call _ conn = Ok conn }
 
@@ -27,11 +27,11 @@ type TestClass () =
   member __.TestMethodPassing () =
     let conn = defaultConnection
 
-    let spiles = [
-      spile OkSpile defaultSpileOptions
-      spile TestSpile defaultSpileOptions
+    let corks = [
+      cork OkCork defaultCorkOptions
+      cork TestCork defaultCorkOptions
     ]
 
     conn
-    |> run spiles
+    |> run corks
     |> assertOkResult

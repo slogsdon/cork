@@ -1,14 +1,14 @@
-namespace Spile.Example.AspNetCore
+namespace Cork.Example.AspNetCore
 
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.DependencyInjection
-open Spile
-open Spile.AspNetCore
+open Cork
+open Cork.AspNetCore
 
-type MySpile () =
-  inherit AbstractSpile()
+type MyCork () =
+  inherit AbstractCork()
 
   override __.Call _options conn =
     let context = conn.Private.Item("aspnetcore_httpcontext") :?> HttpContext
@@ -24,10 +24,10 @@ type Startup() =
     if env.IsDevelopment() then
       app.UseDeveloperExceptionPage() |> ignore
 
-    let spiles = [
-      spile MySpile defaultSpileOptions
+    let corks = [
+      cork MyCork defaultCorkOptions
     ]
 
-    app.UseSpile(spiles) |> ignore
+    app.UseCork(corks) |> ignore
 
-    app.Run(SpileResponse.Finalize)
+    app.Run(CorkResponse.Finalize)

@@ -1,4 +1,4 @@
-module Spile.Fable.Http.Test.Main
+module Cork.Fable.Http.Test.Main
 
 open Fable.Core.JsInterop
 
