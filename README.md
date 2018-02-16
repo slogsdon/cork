@@ -14,7 +14,49 @@ F# port of [Elixir's Plug library](https://github.com/elixir-lang/plug)
   - Library for using Spile in a Node.js project which uses the built-in HTTP server with included helpers to aid in project development
   - Targets `netstandard2.0` to match Fable.Import.Node (as of 16 Feb 2018)
 
+## Installation
+
+Add a Spile package to your project via `dotnet add package`, `paket add`, etc. For example:
+
+```
+dotnet add package Spile
+```
+
+## Getting Started
+
+```fsharp
+open Spile
+
+// new class type extending abstract
+type MySpile () =
+  inherit AbstractSpile()
+
+  override __.Call _options conn =
+    Ok { conn with
+          Status = 201
+          ResponseBody = "Hello World!"
+       }
+
+// new object expression implementing interface
+let TestSpile () =
+  { new ISpile with
+      member __.Init options = options
+      member __.Call _ conn = Ok conn }
+
+let spiles = [
+  MySpile() :> ISpile, defaultSpileOptions
+  TestSpile(), defaultSpileOptions
+]
+
+// this should be updated with real connection information
+let conn = Connection.defaultConnection
+
+conn |> run spiles
+```
+
 ## Examples
+
+For a full end-to-end demonstration, look at one of the below example projects:
 
 - [Spile.Example.AspNetCore](examples/Spile.Example.AspNetCore) - Minimal ASP.NET Core project using Spile, created with `dotnet new web -lang f#` and modified to use Spile.AspNetCore.
 - [Spile.Example.Fable.Http](examples/Spile.Example.Fable.Http) - Minimal Node.js project using Spile, created with `dotnet new fable-library -lang f#` and modified to use Spile.Fable.Http.
