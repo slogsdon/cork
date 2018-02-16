@@ -42,15 +42,26 @@ all: clean restore build tests
 ## Build package
 build:
 	@dotnet build --no-restore --verbosity=minimal
+	@cd test/Spile.Fable.Http.Test && dotnet fable webpack --port free
+	@cd examples/Spile.Example.Fable.Http && dotnet fable webpack --port free
 
 ## Clean build artifacts
 clean:
-	@dotnet clean
+	@rm -rf **/*/bin **/*/obj
 
 ## Restore package dependencies
 restore:
+	@mono .paket/paket.exe update
 	@dotnet restore --verbosity=minimal
+	@yarn install
+
+run-aspnetcore:
+	@dotnet run $(TEST_OPTIONS) --project examples/Spile.Example.AspNetCore/Spile.Example.AspNetCore.fsproj
+
+run-fable-http:
+	@node examples/Spile.Example.Fable.Http/bin/bundle.js
 
 ## Run package tests
 tests:
 	@dotnet test $(TEST_OPTIONS) $(TEST_PROJECT)
+	@cd test/Spile.Fable.Http.Test && yarn run mocha bin
