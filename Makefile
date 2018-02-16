@@ -1,7 +1,7 @@
 # Project configuration
 PROJECT_NAME = Spile
 TEST_PROJECT = test/$(PROJECT_NAME).Test/
-TEST_OPTIONS =
+TEST_OPTIONS = --no-restore --no-build
 
 # Needed SHELL since I'm using zsh
 SHELL := /bin/bash
@@ -36,11 +36,12 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
+## Alias for `make clean restore build tests`
+all: clean restore build tests
+
 ## Build package
-build: restore
-	# Explicitly build the test project since it contains a ProjectReference to the library
-	# and prevents the library from being built twice
-	@dotnet build --no-restore --verbosity=quiet $(TEST_PROJECT)
+build:
+	@dotnet build --no-restore --verbosity=minimal
 
 ## Clean build artifacts
 clean:
@@ -48,7 +49,7 @@ clean:
 
 ## Restore package dependencies
 restore:
-	@dotnet restore --verbosity=quiet
+	@dotnet restore --verbosity=minimal
 
 ## Run package tests
 tests:
