@@ -12,7 +12,7 @@ let assertOkResult result =
 
 // new class type extending abstract
 type OkCork () =
-  inherit AbstractCork()
+  inherit BaseCork()
 
 // new object expression implementing interface
 let TestCork () =

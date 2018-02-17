@@ -7,7 +7,7 @@ open Cork.Connection
 open Cork.Fable.Http
 
 type MyCork () =
-  inherit AbstractCork()
+  inherit BaseCork()
 
   override __.Call _options conn =
     conn
@@ -15,7 +15,7 @@ type MyCork () =
     |> Ok
 
 type FinalizeCork () =
-  inherit AbstractCork()
+  inherit BaseCork()
 
   override __.Call _options conn =
     let response = conn.Private.Item(connectionPrivateKey "response") :?> Http.ServerResponse

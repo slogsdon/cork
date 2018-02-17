@@ -61,7 +61,7 @@ module Library =
     |> List.fold (flip bind) (Ok conn)
 
 [<AbstractClass>]
-type AbstractCork() =
+type BaseCork() =
   interface ICork with
     member this.Init options = this.Init options
     member this.Call options conn = this.Call options conn

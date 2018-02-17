@@ -30,7 +30,7 @@ open Cork.Connection
 
 // new class type extending abstract
 type MyCork () =
-  inherit AbstractCork()
+  inherit BaseCork()
 
   override __.Call _options conn =
     conn

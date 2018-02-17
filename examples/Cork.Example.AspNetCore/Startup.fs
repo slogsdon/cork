@@ -8,7 +8,7 @@ open Cork.Connection
 open Cork.AspNetCore
 
 type MyCork () =
-  inherit AbstractCork()
+  inherit BaseCork()
 
   override __.Call _options conn =
     conn
