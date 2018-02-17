@@ -2,19 +2,18 @@ namespace Cork.Example.AspNetCore
 
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.DependencyInjection
 open Cork
+open Cork.Connection
 open Cork.AspNetCore
 
 type MyCork () =
   inherit AbstractCork()
 
   override __.Call _options conn =
-    let context = conn.Private.Item("aspnetcore_httpcontext") :?> HttpContext
-    context.Response.StatusCode <- 201
-    context.Response.WriteAsync("Hello World!") |> ignore
-    Ok conn
+    conn
+    |> resp 200 "Hello world!"
+    |> Ok
 
 type Startup() =
   member __.ConfigureServices(_services: IServiceCollection) =

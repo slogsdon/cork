@@ -6,6 +6,18 @@ open Cork.Connection
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Builder
 
+module Context =
+  let setStatus (connection: Connection) (context: HttpContext) =
+    context.Response.StatusCode <- connection |> getStatus
+    context
+
+  let setResponseBody (connection: Connection) (context: HttpContext) =
+    connection
+    |> getResponseBody
+    |> context.Response.WriteAsync
+    |> ignore
+    context
+
 [<AutoOpen>]
 module Middleware =
   /// The dictionary key used to store the ASP.NET HTTP conext in the
@@ -17,8 +29,8 @@ module Middleware =
 
   /// Converts an ASP.NET HTTP context to a Cork client connection record.
   let connectionOfHttpContext (context: HttpContext): Connection =
-    { defaultConnection with
-        Private = dict [connectionPrivateKey, context :> obj] }
+    defaultConnection
+    |> putPrivate connectionPrivateKey context
 
   /// Converts a Cork result to its corresponding ASP.NET HTTP context.
   ///
@@ -26,11 +38,15 @@ module Middleware =
   /// the exception is rethrown to allow ASP.NET to handle.
   let httpContextOfResult (result: Result): HttpContext =
     let getContext connection =
-      connection.Private.Item(connectionPrivateKey) :?> HttpContext
+      connection |> getPrivate connectionPrivateKey :?> HttpContext
 
     match result with
     | Ok connection ->
-      connection |> getContext
+      connection
+      |> getContext
+      |> Context.setStatus connection
+      |> Context.setResponseBody connection
+
     | Error error ->
       match error.Exception with
       | Some e -> raise e

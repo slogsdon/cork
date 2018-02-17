@@ -26,16 +26,16 @@ dotnet add package Cork
 
 ```fsharp
 open Cork
+open Cork.Connection
 
 // new class type extending abstract
 type MyCork () =
   inherit AbstractCork()
 
   override __.Call _options conn =
-    Ok { conn with
-          Status = 201
-          ResponseBody = "Hello World!"
-       }
+    conn
+    |> resp 200 "Hello world!"
+    |> Ok
 
 // new object expression implementing interface
 let TestCork () =

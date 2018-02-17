@@ -51,41 +51,13 @@ type Connection =
     /// Raw request path
     RequestPath: string
     ResponseBody: string
-    ResponseCookies: Fetchable<Params<string>>
+    ResponseCookies: Params<string>
     ResponseHeaders: Headers
     /// Request scheme
     Scheme: string
     /// State of the connection
     State: ConnectionState
     Status: int
-  }
-
-let defaultConnection =
-  {
-    Assigns = dict []
-    BeforeSend = []
-    BodyParams = Unfetched
-    Cookies = Unfetched
-    Host = ""
-    Method = ""
-    Params = Unfetched
-    PathInfo = []
-    PathParams = dict []
-    Port = 0
-    Private = dict []
-    QueryParams = Unfetched
-    QueryString = ""
-    Peer = "" , 0
-    RemoteIP = ""
-    RequestCookies = Unfetched
-    RequestHeaders = []
-    RequestPath = ""
-    ResponseBody = ""
-    ResponseCookies = Unfetched
-    ResponseHeaders = []
-    Scheme = ""
-    State = Unset
-    Status = 0
   }
 
 /// Reasons for connection errors
@@ -104,8 +76,150 @@ type ErroredConnection =
     Exception: Exception option
   }
 
-/// Helper function for creating `ErroredConnection` values
-let error conn reason exc =
-  { Connection = conn
-    Reason = reason
-    Exception = exc }
+[<AutoOpen>]
+module Helpers =
+  let defaultConnection =
+    {
+      Assigns = dict []
+      BeforeSend = []
+      BodyParams = Unfetched
+      Cookies = Unfetched
+      Host = ""
+      Method = ""
+      Params = Unfetched
+      PathInfo = []
+      PathParams = dict []
+      Port = 0
+      Private = dict []
+      QueryParams = Unfetched
+      QueryString = ""
+      Peer = "" , 0
+      RemoteIP = ""
+      RequestCookies = Unfetched
+      RequestHeaders = []
+      RequestPath = ""
+      ResponseBody = ""
+      ResponseCookies = dict []
+      ResponseHeaders = []
+      Scheme = ""
+      State = Unset
+      Status = 0
+    }
+
+  /// Helper function for creating `ErroredConnection` values
+  let error conn reason exc =
+    { Connection = conn
+      Reason = reason
+      Exception = exc }
+
+  let getStatus conn =
+    conn.Status
+
+  let putStatus status conn =
+    { conn with Status = status }
+
+  let getResponseBody conn =
+    conn.ResponseBody
+
+  let resp status body conn =
+    { conn with
+        Status = status
+        ResponseBody = body }
+
+  // params
+
+  let getPrivate key conn =
+    conn.Private.Item(key)
+
+  let putPrivate key data conn =
+    let priv = conn.Private
+    priv.Add(key, data)
+    { conn with Private = priv }
+
+  let deletePrivate (key: string) conn =
+    let priv = conn.Private
+    priv.Remove(key) |> ignore
+    { conn with Private = priv }
+
+  let getAssigns key conn =
+    conn.Assigns.Item(key)
+
+  let putAssigns key data conn =
+    let assigns = conn.Assigns
+    assigns.Add(key, data)
+    { conn with Assigns = assigns }
+
+  let deleteAssigns (key: string) conn =
+    let assigns = conn.Assigns
+    assigns.Remove(key) |> ignore
+    { conn with Assigns = assigns }
+
+  let getPathParam key conn =
+    conn.PathParams.Item(key)
+
+  let putPathParam key data conn =
+    let pathParams = conn.PathParams
+    pathParams.Add(key, data)
+    { conn with PathParams = pathParams }
+
+  let deletePathParam (key: string) conn =
+    let pathParams = conn.PathParams
+    pathParams.Remove(key) |> ignore
+    { conn with PathParams = pathParams }
+
+  // fetchable params
+
+  let private getFetchableParam (key: string) (name: string) (fetchable: Fetchable<Params<'a>>) =
+    match fetchable with
+    | Fetched prms ->
+      prms.Item(key)
+    | Unfetched ->
+      raise <| Exception(name + " have not yet been fetched")
+
+  let fetchBodyParams conn =
+    // TODO: get real data
+    let bodyParams = dict []
+    { conn with BodyParams = Fetched bodyParams }
+
+  let getBodyParam key conn =
+    getFetchableParam key "BodyParams" conn.BodyParams
+
+  let fetchCookies conn =
+    // TODO: get real data
+    let cookies = dict []
+    { conn with Cookies = Fetched cookies }
+
+  let getCookie key conn =
+    getFetchableParam key "Cookies" conn.Cookies
+
+  let fetchParams conn =
+    // TODO: get real data
+    let prms = dict []
+    { conn with Params = Fetched prms }
+
+  let getParam key conn =
+    getFetchableParam key "Params" conn.Params
+
+  let fetchQueryParams conn =
+    // TODO: get real data
+    let queryParams = dict []
+    { conn with QueryParams = Fetched queryParams }
+
+  let getQueryParam key conn =
+    getFetchableParam key "QueryParams" conn.QueryParams
+
+  let fetchRequestCookies conn =
+    // TODO: get real data
+    let requestCookies = dict []
+    { conn with RequestCookies = Fetched requestCookies }
+
+  let getRequestCookie key conn =
+    getFetchableParam key "RequestCookies" conn.RequestCookies
+
+  let fetchAllParams conn =
+    conn
+    |> fetchBodyParams
+    |> fetchCookies
+    |> fetchParams
+    |> fetchQueryParams
+    |> fetchRequestCookies

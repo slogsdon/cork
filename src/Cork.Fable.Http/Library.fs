@@ -5,6 +5,15 @@ open Fable.Import.Node.Http
 open Cork
 open Cork.Connection
 
+module Response =
+  let setStatus (connection: Connection) (response: ServerResponse) =
+    connection |> getStatus |> response.writeHead
+    response
+
+  let setResponseBody (connection: Connection) (response: ServerResponse) =
+    response.write(connection |> getResponseBody, null) |> ignore
+    response
+
 [<AutoOpen>]
 module Middleware =
   /// Creates the dictionary key used to store the Node.js HTTP context
@@ -16,12 +25,9 @@ module Middleware =
 
   /// Converts an Node.js HTTP context to a Cork client connection record.
   let connectionOfHttpContext (req: IncomingMessage, res: ServerResponse): Connection =
-    { defaultConnection with
-        Private =
-          dict [
-            connectionPrivateKey "request", req :> obj
-            connectionPrivateKey "response", res :> obj
-          ] }
+    defaultConnection
+    |> putPrivate (connectionPrivateKey "request") req
+    |> putPrivate (connectionPrivateKey "response") res
 
   /// Converts a Cork result to its corresponding Node.js HTTP context.
   ///
@@ -29,17 +35,24 @@ module Middleware =
   /// the exception is rethrown to allow Node.js to handle.
   let httpContextOfResult (result: Result): (IncomingMessage * ServerResponse) =
     let getRequest connection =
-      connection.Private.Item(
+      connection |> getPrivate(
         connectionPrivateKey "request"
       ) :?> IncomingMessage
     let getResponse connection =
-      connection.Private.Item(
+      connection |> getPrivate(
         connectionPrivateKey "response"
       ) :?> ServerResponse
 
     match result with
     | Ok connection ->
-      connection |> getRequest, connection |> getResponse
+      let response =
+        connection
+        |> getResponse
+        |> Response.setStatus connection
+        |> Response.setResponseBody connection
+
+      connection |> getRequest, response
+
     | Error error ->
       match error.Exception with
       | Some e -> raise e

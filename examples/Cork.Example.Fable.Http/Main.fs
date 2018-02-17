@@ -3,16 +3,16 @@ module Cork.Example.Fable.Http.Main
 open Fable.Core.JsInterop
 open Fable.Import.Node
 open Cork
+open Cork.Connection
 open Cork.Fable.Http
 
 type MyCork () =
   inherit AbstractCork()
 
   override __.Call _options conn =
-    let response = conn.Private.Item(connectionPrivateKey "response") :?> Http.ServerResponse
-    response.writeHead 201
-    response.write("Hello World!", null) |> ignore
-    Ok conn
+    conn
+    |> resp 200 "Hello world!"
+    |> Ok
 
 type FinalizeCork () =
   inherit AbstractCork()
