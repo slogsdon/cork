@@ -2,6 +2,7 @@
 PROJECT_NAME = Cork
 TEST_PROJECT = test/$(PROJECT_NAME).Test/
 TEST_OPTIONS = --no-restore --no-build
+NUGET_SOURCE = https://api.nuget.org/v3/index.json
 
 # Needed SHELL since I'm using zsh
 SHELL := /bin/bash
@@ -12,7 +13,7 @@ YELLOW := $(shell tput -Txterm setaf 3)
 WHITE  := $(shell tput -Txterm setaf 7)
 RESET  := $(shell tput -Txterm sgr0)
 
-TARGET_MAX_CHAR_NUM=20
+TARGET_MAX_CHAR_NUM=24
 
 .PHONY: help
 
@@ -49,16 +50,27 @@ build:
 clean:
 	@rm -rf src/*/bin src/*/obj test/*/bin test/*/obj examples/*/bin examples/*/obj
 
+## Publishes packages to NuGet
+nuget-publish: clean
+	@dotnet pack src/Cork/
+	@dotnet pack src/Cork.AspNetCore/
+	@dotnet pack src/Cork.Fable.Http/
+	@dotnet nuget push "src/Cork/bin/Debug/Cork.*.nupkg" --api-key $(NUGET_API_KEY) --source $(NUGET_SOURCE)
+	@dotnet nuget push "src/Cork.AspNetCore/bin/Debug/Cork.AspNetCore.*.nupkg" --api-key $(NUGET_API_KEY) --source $(NUGET_SOURCE)
+	@dotnet nuget push "src/Cork.Fable.Http/bin/Debug/Cork.Fable.Http.*.nupkg" --api-key $(NUGET_API_KEY) --source $(NUGET_SOURCE)
+
 ## Restore package dependencies
 restore:
 	@mono .paket/paket.exe update
 	@dotnet restore --verbosity=minimal
 	@yarn install
 
-run-aspnetcore:
+## Runs the ASP.NET Core example
+run-example-aspnetcore:
 	@dotnet run $(TEST_OPTIONS) --project examples/Cork.Example.AspNetCore/Cork.Example.AspNetCore.fsproj
 
-run-fable-http:
+## Runs the Fable / Node.JS example
+run-example-fable-http:
 	@node examples/Cork.Example.Fable.Http/bin/bundle.js
 
 ## Run package tests
