@@ -1,4 +1,4 @@
-namespace Cork
+﻿namespace Cork
 
 open Cork.Connection
 open System.Collections.Generic

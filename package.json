@@ -1,12 +1,13 @@
 {
-    "private": true,
-    "devDependencies": {
-        "babel-core": "6.26.0",
-        "babel-loader": "7.1.1",
-        "babel-preset-env": "^1.6.1",
-        "fable-loader": "1.0.7",
-        "isomorphic-fetch": "2.2.1",
-        "mocha": "3.5.0",
-        "webpack": "^3.11.0"
-    }
+  "private": true,
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "dependencies": {
+    "@babel/core": "^7.8.4",
+    "fable-compiler": "^2.4.15",
+    "fable-loader": "^2.1.8",
+    "mocha": "^8.2.1",
+    "webpack": "^4.41.6"
+  }
 }

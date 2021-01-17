@@ -8,6 +8,6 @@ open Fable.Core.Testing
 let it (_msg: string) (f: unit->unit): unit = jsNative
 
 it "Adding works" <| fun () ->
-    let expected = 3
-    let actual = 1 + 2
-    Assert.AreEqual(expected, actual)
+  let expected = 3
+  let actual = 1 + 2
+  Assert.AreEqual(expected, actual)

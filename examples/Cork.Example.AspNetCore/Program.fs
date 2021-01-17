@@ -1,19 +1,19 @@
 namespace Cork.Example.AspNetCore
 
-open Microsoft.AspNetCore
 open Microsoft.AspNetCore.Hosting
+open Microsoft.Extensions.Hosting
 
 module Program =
-  let exitCode = 0
 
-  let BuildWebHost args =
-    WebHost
+  let createHostBuilder args =
+    Host
       .CreateDefaultBuilder(args)
-      .UseStartup<Startup>()
-      .Build()
+      .ConfigureWebHostDefaults(fun webBuilder -> 
+        webBuilder.UseStartup<Startup>() |> ignore
+      )
 
   [<EntryPoint>]
   let main args =
-    BuildWebHost(args).Run()
+    createHostBuilder(args).Build().Run()
 
-    exitCode
+    0 // Exit code

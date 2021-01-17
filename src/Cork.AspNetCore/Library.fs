@@ -1,10 +1,10 @@
 namespace Cork.AspNetCore
 
-open Microsoft.AspNetCore.Http
 open Cork
 open Cork.Connection
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Builder
+open Microsoft.AspNetCore.Http
 
 module Context =
   let setStatus (connection: Connection) (context: HttpContext) =
@@ -78,5 +78,3 @@ module CorkMiddlewareExtensions =
   type IApplicationBuilder with
     member this.UseCork (corks: (ICork * Options) list) =
       this.UseMiddleware<CorkMiddleware>(corks)
-
-
