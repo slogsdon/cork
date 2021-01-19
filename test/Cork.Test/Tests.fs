@@ -19,10 +19,10 @@ module Helpers =
     inherit BaseCork()
 
   // new object expression implementing interface
-  let TestCork () =
-    { new ICork with
-        member __.Init options = options
-        member __.Call _ conn = Ok conn }
+  type TestCork () =
+    inherit BaseCork()
+    override __.Init options = options
+    override __.Call _ conn = Ok conn
 
 [<TestClass>]
 type TestClass () =

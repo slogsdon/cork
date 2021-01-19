@@ -8,7 +8,7 @@ module Program =
   let createHostBuilder args =
     Host
       .CreateDefaultBuilder(args)
-      .ConfigureWebHostDefaults(fun webBuilder -> 
+      .ConfigureWebHostDefaults(fun webBuilder ->
         webBuilder.UseStartup<Startup>() |> ignore
       )
 

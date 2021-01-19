@@ -37,12 +37,6 @@ type MyCork () =
     |> resp 200 "Hello world!"
     |> Ok
 
-// new object expression implementing interface
-let TestCork () =
-  { new ICork with
-      member __.Init options = options
-      member __.Call _ conn = Ok conn }
-
 let corks = [
   cork MyCork defaultCorkOptions
   cork TestCork defaultCorkOptions

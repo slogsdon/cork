@@ -9,23 +9,8 @@ type Result = Result<Connection, ErroredConnection>
 /// Dictionary type alias
 type Options = IDictionary<string, obj>
 
-/// The Cork contract
-type ICork =
-  /// Prepares options for a Cork before being passed to `ICork.Call`.
-  /// Useful for Cork implementors to modify options passed in by
-  /// third-party developers.
-  abstract member Init: Options -> Options
-  /// Accepts a set of options and filters and/or modifies a current
-  /// client connection.
-  abstract member Call: Options -> Connection -> Result
-
 [<AutoOpen>]
 module Library =
-  /// Helper for building Cork lists, handling the cast to ICork for
-  /// compatible sub-types.
-  let cork (corkType: unit -> 'T when 'T :> ICork) (opts: Options) =
-    corkType() :> ICork, opts
-
   /// A set of empty Cork options.
   let defaultCorkOptions: Options = dict []
   /// A basic init function for Corks to use in their implementations.
@@ -33,9 +18,28 @@ module Library =
   /// A basic call function for Corks to use in their implementations.
   let defaultCorkCall (_: Options) (conn: Connection): Result = Ok conn
 
+  /// The Cork contract
+  [<AbstractClass>]
+  type BaseCork () =
+    /// Prepares options for a Cork before being passed to `ICork.Call`.
+    /// Useful for Cork implementors to modify options passed in by
+    /// third-party developers.
+    abstract member Init: Options -> Options
+    /// Accepts a set of options and filters and/or modifies a current
+    /// client connection.
+    abstract member Call: Options -> Connection -> Result
+
+    default __.Init options = defaultCorkInit options
+    default __.Call options conn = defaultCorkCall options conn
+
+  /// Helper for building Cork lists, handling the cast to ICork for
+  /// compatible sub-types.
+  let cork (corkType: unit -> 'T when 'T :> BaseCork) (opts: Options) =
+    corkType() :> BaseCork, opts
+
   /// Runs a connection over a list of configured corks.
-  let run (corks: (ICork * Options) list) (conn: Connection): Result =
-    let asBindable (corkWithOptions: ICork * Options): Connection -> Result =
+  let run (corks: (BaseCork * Options) list) (conn: Connection): Result =
+    let asBindable (corkWithOptions: BaseCork * Options): Connection -> Result =
       let cork = fst corkWithOptions
       let options = snd corkWithOptions
 
@@ -59,20 +63,3 @@ module Library =
     corks
     |> List.map asBindable
     |> List.fold (flip bind) (Ok conn)
-
-[<AbstractClass>]
-type BaseCork () =
-  interface ICork with
-    member this.Init options = this.Init options
-    member this.Call options conn = this.Call options conn
-
-  /// Prepares options for a Cork before being passed to `ICork.Call`.
-  /// Useful for Cork implementors to modify options passed in by
-  /// third-party developers.
-  abstract member Init: Options -> Options
-  /// Accepts a set of options and filters and/or modifies a current
-  /// client connection.
-  abstract member Call: Options -> Connection -> Result
-
-  default __.Init options = defaultCorkInit options
-  default __.Call options conn = defaultCorkCall options conn

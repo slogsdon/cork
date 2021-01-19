@@ -77,7 +77,7 @@ type ErroredConnection =
   }
 
 [<AutoOpen>]
-module Helpers =
+module rec Helpers =
   let defaultConnection =
     {
       Assigns = Dictionary()
@@ -133,6 +133,10 @@ module Helpers =
 
   let putPrivate key data conn =
     let priv = conn.Private
+
+    if priv.ContainsKey(key) then
+      priv.Remove(key) |> ignore
+
     priv.Add(key, data)
     { conn with Private = priv }
 

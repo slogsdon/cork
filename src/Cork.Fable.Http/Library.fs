@@ -117,7 +117,39 @@ module rec Http =
     [<Emit("$0[$1]{{=$2}}")>] abstract Item: errorCode: string -> string with get, set
 
   type [<StringEnum>] Methods =
-    | [<CompiledName("ACL")>] Acl | [<CompiledName("BIND")>] Bind | [<CompiledName("CHECKOUT")>] Checkout | [<CompiledName("CONNECT")>] Connect | [<CompiledName("COPY")>] Copy | [<CompiledName("DELETE")>] Delete | [<CompiledName("GET")>] Get | [<CompiledName("HEAD")>] Head | [<CompiledName("LINK")>] Link | [<CompiledName("LOCK")>] Lock | [<CompiledName("M-SEARCH")>] ``M-search`` | [<CompiledName("MERGE")>] Merge | [<CompiledName("MKACTIVITY")>] Mkactivity | [<CompiledName("MKCALENDAR")>] Mkcalendar | [<CompiledName("MKCOL")>] Mkcol | [<CompiledName("MOVE")>] Move | [<CompiledName("NOTIFY")>] Notify | [<CompiledName("OPTIONS")>] Options | [<CompiledName("PATCH")>] Patch | [<CompiledName("POST")>] Post | [<CompiledName("PROPFIND")>] Propfind | [<CompiledName("PROPPATCH")>] Proppatch | [<CompiledName("PURGE")>] Purge | [<CompiledName("PUT")>] Put | [<CompiledName("REBIND")>] Rebind | [<CompiledName("REPORT")>] Report | [<CompiledName("SEARCH")>] Search | [<CompiledName("SUBSCRIBE")>] Subscribe | [<CompiledName("TRACE")>] Trace | [<CompiledName("UNBIND")>] Unbind | [<CompiledName("UNLINK")>] Unlink | [<CompiledName("UNLOCK")>] Unlock | [<CompiledName("UNSUBSCRIBE")>] Unsubscribe
+    | [<CompiledName("ACL")>] Acl
+    | [<CompiledName("BIND")>] Bind
+    | [<CompiledName("CHECKOUT")>] Checkout
+    | [<CompiledName("CONNECT")>] Connect
+    | [<CompiledName("COPY")>] Copy
+    | [<CompiledName("DELETE")>] Delete
+    | [<CompiledName("GET")>] Get
+    | [<CompiledName("HEAD")>] Head
+    | [<CompiledName("LINK")>] Link
+    | [<CompiledName("LOCK")>] Lock
+    | [<CompiledName("M-SEARCH")>] ``M-search``
+    | [<CompiledName("MERGE")>] Merge
+    | [<CompiledName("MKACTIVITY")>] Mkactivity
+    | [<CompiledName("MKCALENDAR")>] Mkcalendar
+    | [<CompiledName("MKCOL")>] Mkcol
+    | [<CompiledName("MOVE")>] Move
+    | [<CompiledName("NOTIFY")>] Notify
+    | [<CompiledName("OPTIONS")>] Options
+    | [<CompiledName("PATCH")>] Patch
+    | [<CompiledName("POST")>] Post
+    | [<CompiledName("PROPFIND")>] Propfind
+    | [<CompiledName("PROPPATCH")>] Proppatch
+    | [<CompiledName("PURGE")>] Purge
+    | [<CompiledName("PUT")>] Put
+    | [<CompiledName("REBIND")>] Rebind
+    | [<CompiledName("REPORT")>] Report
+    | [<CompiledName("SEARCH")>] Search
+    | [<CompiledName("SUBSCRIBE")>] Subscribe
+    | [<CompiledName("TRACE")>] Trace
+    | [<CompiledName("UNBIND")>] Unbind
+    | [<CompiledName("UNLINK")>] Unlink
+    | [<CompiledName("UNLOCK")>] Unlock
+    | [<CompiledName("UNSUBSCRIBE")>] Unsubscribe
 
   type IExports =
     abstract Agent: AgentStatic with get, set
@@ -132,11 +164,11 @@ module rec Http =
 
 module Response =
   let setStatus (connection: Connection) (response: Http.ServerResponse) =
-    // connection |> getStatus |> response.writeHead
+    connection |> getStatus |> response.writeHead
     response
 
   let setResponseBody (connection: Connection) (response: Http.ServerResponse) =
-    // response.write(connection |> getResponseBody, null) |> ignore
+    response.write(connection |> getResponseBody, null) |> ignore
     response
 
 [<AutoOpen>]
@@ -146,7 +178,7 @@ module Middleware =
   ///
   /// Warning: If using this to access the raw objects, changes
   /// may be overwritten once a Cork callstack is invoked.
-  let connectionPrivateKey key = String.concat "" ["node_http"; key]
+  let connectionPrivateKey key = String.concat "" ["node_http_"; key]
 
   /// Converts an Node.js HTTP context to a Cork client connection record.
   let connectionOfHttpContext (req: Http.IncomingMessage, res: Http.ServerResponse): Connection =
@@ -176,6 +208,8 @@ module Middleware =
         |> Response.setStatus connection
         |> Response.setResponseBody connection
 
+      response.``end``()
+
       connection |> getRequest, response
 
     | Error error ->
@@ -185,7 +219,7 @@ module Middleware =
 
       error.Connection |> getRequest, error.Connection |> getResponse
 
-  let useCork (corks: (ICork * Options) list) =
+  let useCork (corks: (BaseCork * Options) list) =
     fun (req: Http.IncomingMessage) (res: Http.ServerResponse) ->
       (req, res)
       |> connectionOfHttpContext

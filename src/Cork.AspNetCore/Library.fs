@@ -56,7 +56,7 @@ module Middleware =
 
 /// ASP.NET middleware for Cork. Allows a Cork stack to be used in conjuction with
 /// a project's existing ASP.NET middleware or replace it fully.
-type CorkMiddleware (next: RequestDelegate, corks: (ICork * Options) list) =
+type CorkMiddleware (next: RequestDelegate, corks: (BaseCork * Options) list) =
   let next = next
   let corks = corks
 
@@ -76,5 +76,5 @@ type CorkResponse () =
 [<AutoOpen>]
 module CorkMiddlewareExtensions =
   type IApplicationBuilder with
-    member this.UseCork (corks: (ICork * Options) list) =
+    member this.UseCork (corks: (BaseCork * Options) list) =
       this.UseMiddleware<CorkMiddleware>(corks)

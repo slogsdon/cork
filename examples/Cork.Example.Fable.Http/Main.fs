@@ -14,17 +14,8 @@ type MyCork () =
     |> resp 200 "Hello world!"
     |> Ok
 
-type FinalizeCork () =
-  inherit BaseCork()
-
-  override __.Call _options conn =
-    let response = conn.Private.Item(connectionPrivateKey "response") :?> Http.ServerResponse
-    response.``end``()
-    Ok conn
-
 let corks = [
   cork MyCork defaultCorkOptions
-  cork FinalizeCork defaultCorkOptions
 ]
 
 let http: Http.IExports = importAll "http"
