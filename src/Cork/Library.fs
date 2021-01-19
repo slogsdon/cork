@@ -14,10 +14,10 @@ type ICork =
   /// Prepares options for a Cork before being passed to `ICork.Call`.
   /// Useful for Cork implementors to modify options passed in by
   /// third-party developers.
-  abstract Init: Options -> Options
+  abstract member Init: Options -> Options
   /// Accepts a set of options and filters and/or modifies a current
   /// client connection.
-  abstract Call: Options -> Connection -> Result
+  abstract member Call: Options -> Connection -> Result
 
 [<AutoOpen>]
 module Library =
@@ -61,7 +61,7 @@ module Library =
     |> List.fold (flip bind) (Ok conn)
 
 [<AbstractClass>]
-type BaseCork() =
+type BaseCork () =
   interface ICork with
     member this.Init options = this.Init options
     member this.Call options conn = this.Call options conn
@@ -69,10 +69,10 @@ type BaseCork() =
   /// Prepares options for a Cork before being passed to `ICork.Call`.
   /// Useful for Cork implementors to modify options passed in by
   /// third-party developers.
-  abstract Init: Options -> Options
+  abstract member Init: Options -> Options
   /// Accepts a set of options and filters and/or modifies a current
   /// client connection.
-  abstract Call: Options -> Connection -> Result
+  abstract member Call: Options -> Connection -> Result
 
   default __.Init options = defaultCorkInit options
   default __.Call options conn = defaultCorkCall options conn

@@ -3,6 +3,7 @@ PROJECT_NAME = Cork
 TEST_PROJECT = test/$(PROJECT_NAME).Test/
 TEST_OPTIONS = --no-restore --no-build
 NUGET_SOURCE = https://api.nuget.org/v3/index.json
+PACKAGES = "$(PROJECT_NAME)" "$(PROJECT_NAME).AspNetCore" "$(PROJECT_NAME).Fable.Http"
 
 # Needed SHELL since I'm using zsh
 SHELL := /bin/bash
@@ -43,37 +44,37 @@ all: clean restore build tests
 ## Build package
 build:
 	@dotnet build --no-restore --verbosity=minimal
-	@cd test/Cork.Fable.Http.Test && dotnet fable webpack --port free
-	@cd examples/Cork.Example.Fable.Http && dotnet fable webpack --port free
 
 ## Clean build artifacts
 clean:
 	@rm -rf src/*/bin src/*/obj test/*/bin test/*/obj examples/*/bin examples/*/obj
 
-## Publishes packages to NuGet
+## Lint package source files
+lint:
+	@dotnet dotnet-fsharplint lint $(PROJECT_NAME).sln
+
+## Publish packages to NuGet
 nuget-publish: clean
-	@dotnet pack src/Cork/
-	@dotnet pack src/Cork.AspNetCore/
-	@dotnet pack src/Cork.Fable.Http/
-	@dotnet nuget push "src/Cork/bin/Debug/Cork.*.nupkg" --api-key $(NUGET_API_KEY) --source $(NUGET_SOURCE)
-	@dotnet nuget push "src/Cork.AspNetCore/bin/Debug/Cork.AspNetCore.*.nupkg" --api-key $(NUGET_API_KEY) --source $(NUGET_SOURCE)
-	@dotnet nuget push "src/Cork.Fable.Http/bin/Debug/Cork.Fable.Http.*.nupkg" --api-key $(NUGET_API_KEY) --source $(NUGET_SOURCE)
+	@for package in $(PACKAGES); do \
+		echo  $$package; \
+		dotnet pack src/$$package/ ; \
+		dotnet nuget push "src/$$package/bin/Debug/$$package.*.nupkg" --api-key $(NUGET_API_KEY) --source $(NUGET_SOURCE) ; \
+	done
 
 ## Restore package dependencies
 restore:
-	@mono .paket/paket.exe update
 	@dotnet restore --verbosity=minimal
-	@yarn install
+	@npm install
 
-## Runs the ASP.NET Core example
+## Run the ASP.NET Core example
 run-example-aspnetcore:
-	@dotnet run $(TEST_OPTIONS) --project examples/Cork.Example.AspNetCore/Cork.Example.AspNetCore.fsproj
+	@dotnet run $(TEST_OPTIONS) --project examples/$(PROJECT_NAME).Example.AspNetCore/$(PROJECT_NAME).Example.AspNetCore.fsproj
 
-## Runs the Fable / Node.JS example
+## Run the Fable / Node.JS example
 run-example-fable-http:
-	@node examples/Cork.Example.Fable.Http/bin/bundle.js
+	@node examples/$(PROJECT_NAME).Example.Fable.Http/bin/bundle.js
 
 ## Run package tests
 tests:
 	@dotnet test $(TEST_OPTIONS) $(TEST_PROJECT)
-	@cd test/Cork.Fable.Http.Test && yarn run mocha bin
+	@cd test/$(PROJECT_NAME).Fable.Http.Test && npx mocha bin

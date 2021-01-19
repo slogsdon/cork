@@ -1,14 +1,33 @@
-module App
+module Cork.Example.Fable.Http.Main
 
-open Browser.Dom
+open Fable.Core.JsInterop
+// open Fable.Node
+open Cork
+open Cork.Connection
+open Cork.Fable.Http
 
-// Mutable variable to count the number of times we clicked the button
-let mutable count = 0
+type MyCork () =
+  inherit BaseCork()
 
-// Get a reference to our button and cast the Element to an HTMLButtonElement
-let myButton = document.querySelector(".my-button") :?> Browser.Types.HTMLButtonElement
+  override __.Call _options conn =
+    conn
+    |> resp 200 "Hello world!"
+    |> Ok
 
-// Register our listener
-myButton.onclick <- fun _ ->
-    count <- count + 1
-    myButton.innerText <- sprintf "You clicked: %i time(s)" count
+type FinalizeCork () =
+  inherit BaseCork()
+
+  override __.Call _options conn =
+    let response = conn.Private.Item(connectionPrivateKey "response") :?> Http.ServerResponse
+    response.``end``()
+    Ok conn
+
+let corks = [
+  cork MyCork defaultCorkOptions
+  cork FinalizeCork defaultCorkOptions
+]
+
+let http: Http.IExports = importAll "http"
+let server = http.createServer(useCork(corks))
+
+server.listen(5000) |> ignore
